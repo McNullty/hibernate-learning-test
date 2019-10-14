@@ -38,6 +38,9 @@ public class OneToOneTest {
 
     final Post savedPost = entityManager.persist(post);
 
+    System.out.println("post: " + savedPost);
+    System.out.println("postDetails: " + savedPost.getDetails());
+
     Assert.assertNotNull(savedPost);
 
     final List<Post> allPosts = postRepository.findAll();

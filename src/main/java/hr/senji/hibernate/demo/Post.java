@@ -60,7 +60,6 @@ public class Post {
     return "Post{" +
             "id=" + id +
             ", title='" + title + '\'' +
-            ", details=" + details +
             '}';
   }
 }
