@@ -54,4 +54,13 @@ public class Post {
     }
     this.details = details;
   }
+
+  @Override
+  public String toString() {
+    return "Post{" +
+            "id=" + id +
+            ", title='" + title + '\'' +
+            ", details=" + details +
+            '}';
+  }
 }
