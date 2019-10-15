@@ -33,6 +33,7 @@ public class OneToOneTest {
   public void testOneToOneMapping() {
 
     log.info("Fetching all posts");
+    // findAll triggers one query to fetch posts and then N queris to fetch post_details
     List<Post> allPosts = postRepository.findAll();
     log.info("Fetching all posts... done");
 

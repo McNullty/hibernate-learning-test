@@ -22,7 +22,6 @@ public class Post {
           fetch = FetchType.LAZY, optional = false)
   private PostDetails details;
 
-
   public Long getId() {
     return id;
   }
