@@ -28,10 +28,34 @@ public class OneToOneTest {
   private PostDetailsRepository postDetailsRepository;
 
   @Test
-  public void testOneToOneMapping() {
+  public void testOneToOneMappingFetchWithoutDetails() {
 
     log.info("Fetching all posts");
-    // findAll triggers one query to fetch posts and then N queris to fetch post_details
+    // ovo fetcha samo postove
+    List<Post> allPosts = postRepository.findAll();
+    Assert.assertEquals(3, allPosts.size());
+    log.info("Fetching all posts... done");
+
+    for (Post p : allPosts) {
+      log.info("Logging post details");
+      // p.getDetails trigerira fetch details
+      log.info("Post detail: " + p.getDetails());
+      if (p.getId().equals(1L)) {
+        Assert.assertFalse(p.getDetails().isEmpty());
+        Assert.assertEquals("Author 1", p.getDetails().stream().findFirst().get().getCreatedBy());
+      } else if (p.getId().equals(2L)) {
+        Assert.assertFalse(p.getDetails().isEmpty());
+      } else if (p.getId().equals(3L)) {
+        Assert.assertTrue(p.getDetails().isEmpty());
+      }
+    }
+  }
+
+  @Test
+  public void testOneToOneMappingFetchWithDetails() {
+
+    log.info("Fetching all posts");
+    // ovo fetcha sve podatke od jednom (i post i post_detail)
     List<Post> allPosts = postRepository.fetchWithDetails();
     Assert.assertEquals(3, allPosts.size());
     log.info("Fetching all posts... done");

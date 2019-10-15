@@ -5,7 +5,7 @@ import java.util.Set;
 
 @Entity(name = "Post")
 @Table(name = "post")
-@NamedQuery(name = "Post.fetchWithDetails", query = "select p from Post p join fetch p.details")
+@NamedQuery(name = "Post.fetchWithDetails", query = "select p from Post p left join fetch p.details")
 public class Post {
 
   @Id
