@@ -68,7 +68,7 @@ public class PostDetails {
             "id=" + id +
             ", createdOn=" + createdOn +
             ", createdBy='" + createdBy + '\'' +
-            ", post=" + post +
+            ", post=" + post.getId() +
             '}';
   }
 

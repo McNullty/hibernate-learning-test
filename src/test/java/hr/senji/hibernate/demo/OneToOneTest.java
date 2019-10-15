@@ -7,6 +7,8 @@ import java.util.Optional;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
@@ -15,6 +17,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @DataJpaTest
 public class OneToOneTest {
+
+  private static final Logger log = LoggerFactory.getLogger(OneToOneTest.class);
+
   @Autowired
   private TestEntityManager entityManager;
 
@@ -27,28 +32,14 @@ public class OneToOneTest {
   @Test
   public void testOneToOneMapping() {
 
-    PostDetails postDetails = new PostDetails();
-    postDetails.setCreatedBy("Testronic");
-    postDetails.setCreatedOn(new Date());
+    log.info("Fetching all posts");
+    List<Post> allPosts = postRepository.findAll();
+    log.info("Fetching all posts... done");
 
-
-    Post post = new Post();
-    post.setTitle("Test Title");
-    post.setDetails(postDetails);
-
-    final Post savedPost = entityManager.persist(post);
-
-    Assert.assertNotNull(savedPost);
-
-    final List<Post> allPosts = postRepository.findAll();
-//
-//    Assert.assertNotNull(allPosts);
-//
-//    PostDetails postDetailsLoaded = allPosts.get(0).getDetails();
-//    Assert.assertNotNull(postDetailsLoaded);
-
-    Optional<PostDetails> postDetailsLoaded2 = postDetailsRepository.findById(1l);
-    Assert.assertTrue(postDetailsLoaded2.isPresent());
-    System.out.println("Created by: " + postDetailsLoaded2.get().getCreatedBy());
+    for (Post p : allPosts) {
+      log.info("Logging post details");
+      log.info("Post detail: " + p.getDetails());
+    }
   }
+
 }
