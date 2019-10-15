@@ -1,8 +1,6 @@
 package hr.senji.hibernate.demo;
 
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -34,18 +32,20 @@ public class OneToOneTest {
 
     log.info("Fetching all posts");
     // findAll triggers one query to fetch posts and then N queris to fetch post_details
-    List<Post> allPosts = postRepository.findAll();
+    List<Post> allPosts = postRepository.fetchWithDetails();
+    Assert.assertEquals(3, allPosts.size());
     log.info("Fetching all posts... done");
 
     for (Post p : allPosts) {
       log.info("Logging post details");
       log.info("Post detail: " + p.getDetails());
       if (p.getId().equals(1L)) {
-        Assert.assertNotNull(p.getDetails());
+        Assert.assertFalse(p.getDetails().isEmpty());
+        Assert.assertEquals("Author 1", p.getDetails().stream().findFirst().get().getCreatedBy());
       } else if (p.getId().equals(2L)) {
-        Assert.assertNotNull(p.getDetails());
+        Assert.assertFalse(p.getDetails().isEmpty());
       } else if (p.getId().equals(3L)) {
-        Assert.assertNull(p.getDetails());
+        Assert.assertTrue(p.getDetails().isEmpty());
       }
     }
   }
