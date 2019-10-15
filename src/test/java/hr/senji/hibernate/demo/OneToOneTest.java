@@ -39,6 +39,13 @@ public class OneToOneTest {
     for (Post p : allPosts) {
       log.info("Logging post details");
       log.info("Post detail: " + p.getDetails());
+      if (p.getId().equals(1L)) {
+        Assert.assertNotNull(p.getDetails());
+      } else if (p.getId().equals(2L)) {
+        Assert.assertNotNull(p.getDetails());
+      } else if (p.getId().equals(3L)) {
+        Assert.assertNull(p.getDetails());
+      }
     }
   }
 
