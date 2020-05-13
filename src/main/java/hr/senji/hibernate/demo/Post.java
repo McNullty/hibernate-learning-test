@@ -1,15 +1,11 @@
 package hr.senji.hibernate.demo;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.Set;
 
 @Entity(name = "Post")
 @Table(name = "post")
+@NamedQuery(name = "Post.fetchWithDetails", query = "select p from Post p left join fetch p.details")
 public class Post {
 
   @Id
@@ -18,10 +14,8 @@ public class Post {
 
   private String title;
 
-  @OneToOne(mappedBy = "post", cascade = CascadeType.ALL,
-          fetch = FetchType.LAZY, optional = false)
-  private PostDetails details;
-
+  @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+  private Set<PostDetails> details;
 
   public Long getId() {
     return id;
@@ -39,19 +33,11 @@ public class Post {
     this.title = title;
   }
 
-  public PostDetails getDetails() {
+  public Set<PostDetails> getDetails() {
     return details;
   }
 
-  public void setDetails(PostDetails details) {
-    if (details == null) {
-      if (this.details != null) {
-        this.details.setPost(null);
-      }
-    }
-    else {
-      details.setPost(this);
-    }
+  public void setDetails(Set<PostDetails> details) {
     this.details = details;
   }
 

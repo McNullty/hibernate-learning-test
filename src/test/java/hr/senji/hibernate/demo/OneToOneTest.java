@@ -1,12 +1,12 @@
 package hr.senji.hibernate.demo;
 
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
@@ -15,6 +15,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @DataJpaTest
 public class OneToOneTest {
+
+  private static final Logger log = LoggerFactory.getLogger(OneToOneTest.class);
+
   @Autowired
   private TestEntityManager entityManager;
 
@@ -25,33 +28,50 @@ public class OneToOneTest {
   private PostDetailsRepository postDetailsRepository;
 
   @Test
-  public void testOneToOneMapping() {
+  public void testOneToOneMappingFetchWithoutDetails() {
 
-    PostDetails postDetails = new PostDetails();
-    postDetails.setCreatedBy("Testronic");
-    postDetails.setCreatedOn(new Date());
+    log.info("Fetching all posts");
+    // ovo fetcha samo postove
+    List<Post> allPosts = postRepository.findAll();
+    Assert.assertEquals(3, allPosts.size());
+    log.info("Fetching all posts... done");
 
-
-    Post post = new Post();
-    post.setTitle("Test Title");
-    post.setDetails(postDetails);
-
-    final Post savedPost = entityManager.persist(post);
-
-    System.out.println("post: " + savedPost);
-    System.out.println("postDetails: " + savedPost.getDetails());
-
-    Assert.assertNotNull(savedPost);
-
-    final List<Post> allPosts = postRepository.findAll();
-//
-//    Assert.assertNotNull(allPosts);
-//
-//    PostDetails postDetailsLoaded = allPosts.get(0).getDetails();
-//    Assert.assertNotNull(postDetailsLoaded);
-
-    Optional<PostDetails> postDetailsLoaded2 = postDetailsRepository.findById(1l);
-    Assert.assertTrue(postDetailsLoaded2.isPresent());
-    System.out.println("Created by: " + postDetailsLoaded2.get().getCreatedBy());
+    for (Post p : allPosts) {
+      log.info("Logging post details");
+      // p.getDetails trigerira fetch details
+      log.info("Post detail: " + p.getDetails());
+      if (p.getId().equals(1L)) {
+        Assert.assertFalse(p.getDetails().isEmpty());
+        Assert.assertEquals("Author 1", p.getDetails().stream().findFirst().get().getCreatedBy());
+      } else if (p.getId().equals(2L)) {
+        Assert.assertFalse(p.getDetails().isEmpty());
+      } else if (p.getId().equals(3L)) {
+        Assert.assertTrue(p.getDetails().isEmpty());
+      }
+    }
   }
+
+  @Test
+  public void testOneToOneMappingFetchWithDetails() {
+
+    log.info("Fetching all posts");
+    // ovo fetcha sve podatke od jednom (i post i post_detail)
+    List<Post> allPosts = postRepository.fetchWithDetails();
+    Assert.assertEquals(3, allPosts.size());
+    log.info("Fetching all posts... done");
+
+    for (Post p : allPosts) {
+      log.info("Logging post details");
+      log.info("Post detail: " + p.getDetails());
+      if (p.getId().equals(1L)) {
+        Assert.assertFalse(p.getDetails().isEmpty());
+        Assert.assertEquals("Author 1", p.getDetails().stream().findFirst().get().getCreatedBy());
+      } else if (p.getId().equals(2L)) {
+        Assert.assertFalse(p.getDetails().isEmpty());
+      } else if (p.getId().equals(3L)) {
+        Assert.assertTrue(p.getDetails().isEmpty());
+      }
+    }
+  }
+
 }

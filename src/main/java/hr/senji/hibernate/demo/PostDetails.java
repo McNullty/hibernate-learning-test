@@ -58,12 +58,17 @@ public class PostDetails {
     this.createdBy = createdBy;
   }
 
+  public Post getPost() {
+    return post;
+  }
+
   @Override
   public String toString() {
     return "PostDetails{" +
             "id=" + id +
             ", createdOn=" + createdOn +
             ", createdBy='" + createdBy + '\'' +
+            ", post=" + post.getId() +
             '}';
   }
 
