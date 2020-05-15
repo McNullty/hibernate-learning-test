@@ -1,6 +1,8 @@
 package hr.senji.hibernate.demo.three.tables;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -19,7 +21,10 @@ public class OneToManyABCSpecification{
   private static final Logger log = LoggerFactory.getLogger(OneToManyABCSpecification.class);
 
   @Autowired
-  private ATableRepository aTableRepository;
+  private hr.senji.hibernate.demo.three.tables.ATableRepository aTableRepository;
+
+  @Autowired
+  private hr.senji.hibernate.demo.three.tables.BTableRepository bTableRepository;
 
   @Autowired
   private TestEntityManager entityManager;
@@ -29,6 +34,15 @@ public class OneToManyABCSpecification{
     final List<ATable> allData = aTableRepository.findAll();
 
     Assert.assertFalse(allData.isEmpty());
+
+    List<BTable> bs = allData.stream()
+        .map(ATable::getBeovi)
+        .flatMap(Collection::stream)
+        .collect(Collectors.toList());
+
+    bTableRepository.findAllByBs(bs);
+
+    Assert.assertNotNull(allData.get(0).getBeovi().get(0).getCeovi());
   }
 
 }
